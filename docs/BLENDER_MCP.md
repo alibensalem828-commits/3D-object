@@ -76,3 +76,4 @@ Test :
 | `blender` absent de `/mcp` | Tu as lancé `claude` depuis un autre dossier, ou le serveur MCP n'est pas enregistré |
 | « connection refused » | L'add-on n'est pas activé, ou « Start MCP Server » pas cliqué dans la vue 3D |
 | Session cloud | Normal : relance `claude` en local (voir le premier paragraphe) |
+| `$'\r': command not found` | Tu lances le `.sh` sur Windows : utilise le `.ps1`. Si tu veux vraiment bash, `git config core.autocrlf input` puis re-clone (le `.gitattributes` du dépôt corrige ça pour les nouveaux clones) |

@@ -1,0 +1,16 @@
+# Fichiers Blender et sauvegardes automatiques
+*.blend1
+*.blend2
+
+# Sorties lourdes : on versionne les sources, pas les binaires
+exports/*.stl
+exports/*.3mf
+exports/*.obj
+exports/*.gcode
+renders/*
+!renders/.gitkeep
+
+# OS
+Thumbs.db
+desktop.ini
+.DS_Store

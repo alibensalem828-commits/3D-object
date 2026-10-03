@@ -10,6 +10,12 @@ Conséquence : une session Claude Code **dans le cloud** (claude.ai/code, GitHub
 ne peut pas piloter ton Blender — son conteneur n'a aucun accès à ton PC.
 Il faut lancer `claude` **depuis ton propre terminal**, dans ce dossier.
 
+## Nom du paquet
+
+Le paquet s'appelle désormais **`mcp-for-blender`**. L'ancien nom `blender-mcp`
+reste publié comme simple wrapper de compatibilité ; tout le dépôt utilise le
+nouveau nom. Source : <https://github.com/ahujasid/mcp-for-blender>
+
 ## Installation (une seule fois)
 
 Windows (PowerShell) :
@@ -35,17 +41,17 @@ Le script installe `uv`, installe l'add-on Blender, et enregistre le serveur MCP
 # Linux   : curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # 2. serveur MCP
-claude mcp add blender uvx blender-mcp
+claude mcp add blender uvx mcp-for-blender
 
 # 3. add-on Blender
-uvx blender-mcp install-addon
+uvx mcp-for-blender install-addon
 ```
 
 ## Côté Blender (à chaque session)
 
 1. Blender 3.0 ou plus récent.
-2. **Édition → Préférences → Add-ons** : activer « Blender MCP » (barre de recherche si besoin).
-3. Dans la vue 3D : touche **N** → onglet **Blender MCP** → **Start MCP Server**.
+2. **Édition → Préférences → Add-ons** : activer « Interface: MCP for Blender » (barre de recherche si besoin).
+3. Dans la vue 3D : touche **N** → onglet **BlenderMCP** → **Start MCP Server**.
 
 ## Côté Claude Code
 
@@ -76,4 +82,5 @@ Test :
 | `blender` absent de `/mcp` | Tu as lancé `claude` depuis un autre dossier, ou le serveur MCP n'est pas enregistré |
 | « connection refused » | L'add-on n'est pas activé, ou « Start MCP Server » pas cliqué dans la vue 3D |
 | Session cloud | Normal : relance `claude` en local (voir le premier paragraphe) |
+| Deux entrées `blender` (doublon) | `claude mcp add` écrit dans `~/.claude.json` et le dépôt a son `.mcp.json`. Garde-en une : `claude mcp remove blender` pour ne garder que celle du dépôt |
 | `$'\r': command not found` | Tu lances le `.sh` sur Windows : utilise le `.ps1`. Si tu veux vraiment bash, `git config core.autocrlf input` puis re-clone (le `.gitattributes` du dépôt corrige ça pour les nouveaux clones) |

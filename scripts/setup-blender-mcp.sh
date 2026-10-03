@@ -14,13 +14,13 @@ else
 fi
 
 echo "== 2/3 Installation de l'add-on Blender =="
-uvx blender-mcp install-addon
+uvx mcp-for-blender install-addon
 
 echo "== 3/3 Enregistrement du serveur MCP dans Claude Code =="
 if command -v claude >/dev/null 2>&1; then
   # Le .mcp.json du dépôt suffit si tu lances Claude Code depuis ce dossier.
   # Cette ligne ajoute le serveur globalement, pour l'avoir partout.
-  claude mcp add blender uvx blender-mcp
+  claude mcp add blender uvx mcp-for-blender
 else
   echo "CLI 'claude' introuvable : le fichier .mcp.json du dépôt fera le travail."
 fi
@@ -28,7 +28,7 @@ fi
 cat <<'EOF'
 
 Terminé. Il reste 2 étapes manuelles dans Blender :
-  1. Édition > Préférences > Add-ons : activer « Blender MCP »
-  2. Dans la vue 3D : touche N > onglet « Blender MCP » > « Start MCP Server »
+  1. Édition > Préférences > Add-ons : activer « Interface: MCP for Blender »
+  2. Dans la vue 3D : touche N > onglet « BlenderMCP » > « Start MCP Server »
 Puis dans Claude Code : /mcp pour vérifier que « blender » est connecté.
 EOF

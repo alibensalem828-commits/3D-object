@@ -1,0 +1,42 @@
+; etude-mi-mineur — piece originale en mi mineur, ecrite pour ce lecteur.
+; Style "rush" : ostinato en doubles-croches, martelement de notes repetees,
+; glissandos et accords finaux. Chaque ligne = une mesure a 4/4.
+
+@title etude-mi-mineur
+@tempo 148
+@unit 16
+@hold 0.8
+
+:intro
+E3 G3 B3 E4 G4 B4 E5 B4 G4 E4 B3 G3 E3 G3 B3 E4   x2
+A3 C4 E4 A4 C5 E5 A5 E5 C5 A4 E4 C4 A3 C4 E4 A4
+B3 D4 F#4 B4 D5 F#5 B5 F#5 D5 B4 F#4 D4 B3 D4 F#4 B4
+
+:theme
+[E2 B2]:2 E5:2 D5:2 B4:2 [E3 G3]:2 B4:2 D5:2 E5:2
+[C2 G2]:2 G5:2 E5:2 C5:2 [C3 E3]:2 C5:2 E5:2 G5:2
+[G2 D3]:2 D5:2 B4:2 G4:2 [G3 B3]:2 G4:2 B4:2 D5:2
+[D2 A2]:2 F#5:2 D5:2 A4:2 [D3 F#3]:2 A4:2 D5:2 F#5:2
+
+:theme-double
+[E2 B2]:2 E5 F#5 G5 F#5 E5 D5 [E3 G3]:2 B4 D5 E5 F#5 G5 B5
+[C2 G2]:2 G5 A5 G5 E5 C5 E5 [C3 E3]:2 G4 C5 E5 G5 C5 G5
+[G2 D3]:2 D5 E5 F#5 E5 D5 B4 [G3 B3]:2 G4 B4 D5 G5 B5 D5
+[D2 A2]:2 F#5 G5 A5 G5 F#5 D5 [D3 F#3]:2 A4 D5 F#5 A5 F#5 D5
+
+:rush
+E5:0.5 E6:0.5   x16
+E5:0.5 E6:0.5   x8
+D5:0.5 D6:0.5   x8
+C5:0.5 C6:0.5   x8
+B4:0.5 B5:0.5   x8
+
+:glissandos
+gliss(E3,E6,8) gliss(E6,E3,8)
+gliss#(A3,A6,8) gliss#(A6,A3,8)
+gliss(B3,B6,16)
+
+:final
+[E2 E3 G3 B3 E4]:4 [E2 E3 G3 B3 E4]:4 [C2 C3 E3 G3 C4]:4 [C2 C3 E3 G3 C4]:4
+[G2 G3 B3 D4 G4]:4 [G2 G3 B3 D4 G4]:4 [D2 D3 F#3 A3 D4]:4 [D2 D3 F#3 A3 D4]:4
+[E2 B2 E3 G3 B3 E4 G4 B4 E5]:16

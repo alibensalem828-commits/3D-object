@@ -1,0 +1,5 @@
+# Backend recommande (rapide, gere la touche Shift proprement)
+pynput>=1.7.6
+
+# Backend de secours, decommente si pynput ne marche pas chez toi
+# pyautogui>=0.9.54

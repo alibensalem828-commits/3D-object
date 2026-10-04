@@ -6,7 +6,7 @@ import threading
 import time
 from dataclasses import dataclass
 
-from . import keymap
+from . import focus, keymap
 from .backends import Keyboard
 from .sheet import Sheet
 
@@ -17,8 +17,10 @@ class Options:
     speed: float = 1.0  # 1.0 = written tempo, 2.0 = twice as fast
     hold: float | None = None  # overrides the sheet's @hold
     countdown: int = 5
+    start_key: str | None = None  # wait for this key instead of counting down
     verbose: bool = True
     skip_out_of_range: bool = True
+    guard_focus: bool = True  # refuse to play into our own terminal
 
 
 class Player:
@@ -78,6 +80,39 @@ class Player:
             elif self.stop_event.is_set():
                 return False
 
+    # -- start trigger ---------------------------------------------------
+
+    def _wait_for_start_key(self, key_name: str) -> bool:
+        """Block until the user presses the trigger key anywhere on the system."""
+        try:
+            from pynput import keyboard as pk
+        except Exception:
+            print("  (pynput unavailable, falling back to a 5s countdown)")
+            return self.stop_event.wait(5.0) is False
+
+        target = getattr(pk.Key, key_name.lower(), None)
+        if target is None:
+            target = pk.KeyCode.from_char(key_name[0].lower())
+
+        pressed = threading.Event()
+
+        def on_press(key):
+            if key == target:
+                pressed.set()
+                return False
+            return True
+
+        print(f"  Click on the piano window, then press {key_name.upper()} to start (ESC cancels).")
+        with pk.Listener(on_press=on_press) as listener:
+            while not pressed.is_set():
+                if self.stop_event.wait(0.05):
+                    listener.stop()
+                    print("  cancelled.")
+                    return False
+        # Give the key time to come back up so it is not still down when we play.
+        time.sleep(0.15)
+        return True
+
     # -- main loop -------------------------------------------------------
 
     def play(self, sheet: Sheet) -> bool:
@@ -86,13 +121,25 @@ class Player:
         unit = sheet.seconds_per_unit / max(opts.speed, 0.01)
         hold_ratio = opts.hold if opts.hold is not None else sheet.hold
 
-        if opts.countdown:
+        if opts.start_key:
+            if not self._wait_for_start_key(opts.start_key):
+                return False
+        elif opts.countdown:
             for remaining in range(opts.countdown, 0, -1):
                 print(f"  starting in {remaining}...", end="\r", flush=True)
                 if self.stop_event.wait(1.0):
                     print("\n  cancelled before the first note.")
                     return False
             print("  go!" + " " * 20)
+
+        if opts.guard_focus and focus.console_has_focus():
+            print(
+                "\n  ABORTED: this terminal still has the focus, so the whole piece\n"
+                "  would be typed in here instead of the piano.\n"
+                "  Click on the piano window first, then start again.\n"
+                "  Tip: --start-key f9 lets you click first and press F9 when ready."
+            )
+            return False
 
         section = None
         start = time.perf_counter()

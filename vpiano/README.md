@@ -50,6 +50,23 @@ les touches qu'il tenait (sinon tu te retrouves avec Shift bloqué).
 > Commence toujours par `--dry-run` quand tu écris une partition : ça affiche la
 > suite de touches sans rien envoyer au système.
 
+### Le piège du focus
+
+Les frappes partent vers **la fenêtre active**. Si le décompte se termine alors
+que ton terminal a encore le focus, tout le morceau s'écrit dans le terminal.
+
+Sous Windows, le script détecte ce cas et refuse de jouer. Et pour ne plus avoir
+à courir après le décompte, utilise une touche de départ :
+
+```bash
+python -m vpiano etude-mi-mineur --start-key f9
+```
+
+Tu cliques tranquillement sur le piano, puis tu appuies sur **F9** quand tu es
+prêt. C'est la façon la plus fiable de lancer.
+
+(`--no-focus-guard` désactive le garde-fou si jamais il se trompe.)
+
 ---
 
 ## Le clavier
@@ -129,14 +146,48 @@ gliss(E3,E6,8) gliss(E6,E3,8)
   notes répétées à la double vitesse, glissandos et accords finaux. C'est elle
   qui montre ce que le moteur a dans le ventre.
 
+---
+
+## Importer un fichier MIDI
+
+Plutôt que de tout retaper à la main, tu peux partir d'un `.mid` :
+
+```bash
+pip install mido
+
+# convertir et jouer directement
+python -m vpiano mon_morceau.mid
+
+# convertir en partition texte, pour la retoucher ensuite
+python -m vpiano mon_morceau.mid --save mon_morceau.txt
+python -m vpiano mon_morceau.txt
+```
+
+La conversion est forcément approximative — un MIDI a 128 notes, le piano à
+l'écran en a 61 — donc le script :
+
+- **replie** les notes hors tessiture d'une ou plusieurs octaves ;
+- **regroupe** en accord les notes qui démarrent en même temps (30 ms près) ;
+- **garde les voix extrêmes** quand un accord est trop épais (`--midi-voices`) ;
+- **quantifie** les durées sur une grille (`--midi-quantize`, `--midi-tempo`).
+
+Si le résultat sonne bizarre, passe par `--save`, ouvre le `.txt` et corrige à
+la main : c'est tout l'intérêt du format texte.
+
 ### Et Rush E ?
 
-Rush E est une composition protégée (Sheet Music Boss), donc je ne l'ai pas
-recopiée ici. Le moteur, lui, est fait exactement pour ce genre de morceau — si
-tu as la partition, tu la retranscris dans le format ci-dessus et tu la lances
-comme n'importe quel autre fichier. Les ingrédients sont tous là : notes très
-rapides (`:0.5`, `:0.25`), gros accords, glissandos, et `--speed` pour pousser
-le tempo jusqu'à ce que ça casse.
+Rush E est une composition protégée (Sheet Music Boss), donc elle n'est pas
+fournie ici et je ne la recopierai pas. Le moteur, lui, est fait exactement pour
+ce genre de pièce.
+
+Deux chemins si tu veux la jouer :
+
+1. **Tu as un MIDI légitime** → `python -m vpiano rush_e.mid --save rush_e.txt`,
+   tu retouches le texte, tu joues.
+2. **Tu as la partition** → tu la retranscris toi-même dans le format ci-dessus.
+
+Tous les ingrédients sont là : notes très rapides (`:0.5`, `:0.25`), gros
+accords, glissandos, et `--speed` pour pousser le tempo jusqu'à ce que ça casse.
 
 ---
 
@@ -156,7 +207,9 @@ le tempo jusqu'à ce que ça casse.
 vpiano/
 ├── keymap.py     notes <-> touches du clavier (et glissandos)
 ├── sheet.py      lecture du format de partition
+├── midifile.py   import .mid -> partition, et export texte
 ├── backends.py   pynput / pyautogui / dry-run
+├── focus.py      garde-fou : refuse de jouer dans le terminal
 ├── player.py     moteur de lecture, timing, touche panique
 ├── cli.py        interface en ligne de commande
 └── songs/        les partitions
